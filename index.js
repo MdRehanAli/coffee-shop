@@ -27,6 +27,7 @@ async function run() {
         await client.connect();
 
         const coffeeCollection = client.db('coffeeDB').collection('coffee')
+        const userCollection = client.db('coffeeDB').collection('user')
 
         // Read Data 
         app.get('/coffee', async (req, res) => {
@@ -67,23 +68,35 @@ async function run() {
         app.put('/coffee/:id', async (req, res) => {
             const id = req.params.id
             const filter = { _id: new ObjectId(id) }
-            const options = { upSert: true}
+            const options = { upSert: true }
             const updatedCoffee = req.body
             const coffee = {
                 $set: {
                     name: updatedCoffee.name,
-                     quantity: updatedCoffee.quantity,
-                     supplier: updatedCoffee.supplier,
-                     taste: updatedCoffee.taste,
-                     category: updatedCoffee.category,
-                     details: updatedCoffee.details,
-                     photo: updatedCoffee.photo,
+                    quantity: updatedCoffee.quantity,
+                    supplier: updatedCoffee.supplier,
+                    taste: updatedCoffee.taste,
+                    category: updatedCoffee.category,
+                    details: updatedCoffee.details,
+                    photo: updatedCoffee.photo,
 
                 }
             }
             const result = coffeeCollection.updateOne(filter, coffee, options)
             res.send(result)
 
+        })
+
+
+        // USER RELATED API:
+
+        // create data 
+        app.post('/user', async (req, res) => {
+            const user = req.body
+            console.log(user)
+
+            const result = await userCollection.insertOne(user)
+            res.send(result)
         })
 
         // Send a ping to confirm a successful connection
